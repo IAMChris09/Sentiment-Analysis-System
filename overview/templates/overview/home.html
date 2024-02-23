@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>輿情分析系統</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    {%include 'navbar.html'%}
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-12">
+                <h1 style="line-height: 100px;">導覽</h1>
+            </div>
+
+            <div class="col-lg-12 mb-5">
+                <div class="form-group row">
+                    <div class="card">
+                        <div class="card-header">
+
+                            <div class="stroke" data-stroke="">
+
+                                <div class="intro">
+
+                                    <h2><b><u>歡迎來到我們的網站</u></b></h2>
+                                    <br>
+                                    <div>
+                                        大數據時代來臨，如何從眾多資料中抽取出有意義的訊息，分析市場、探勘輿情，對許多政府單位、企業而言是相當重要的應用。 本系統利用中文剖析系統，
+                                        保留了上次報告中近期PPT特定版面的新聞語料，新增了從新聞中分析近期熱門的總統大選，從每句的結構樹中找出字詞之間的次數關係，
+                                        將資料透過不同圖表進行可視化。
+                                    </div>
+                                    <br>
+                                    <p><b><u>我們的網站旨在提供以下幾項功能：</u></b></p>
+                                    <ul>
+                                        <li style="text-align: left;"><a href="{% url 'app_top_keyword:home' %}"><u>Popular Keywords</u></a>：您可以在我們的網站上了解目前最多人提起的關鍵詞與其次數。</li>
+                                        <li style="text-align: left;"><a href="{% url 'app_top_person:home' %}"><u>Popular People</u></a>：您可以在我們的網站上查看目前哪個人物最常被提起與其次數。</li>
+                                        <li style="text-align: left;"><a href="{% url 'app_user_keyword:home' %}"><u>User Keyword</u></a>：您可以在我們的網站上可以針對你輸入的個別關鍵詞進行熱門程度分析。</li>
+                                        <li style="text-align: left;"><a href="{% url 'namespace_user_keyword_association:home' %}"><u>User Keyword Association</u></a>：您可以在我們的網站上對你想要了解的議題進行全文檢索，找出有哪些詞與你的關鍵詞一起出現?</li>
+                                        <li style="text-align: left;"><a href="{% url 'namespace_user_keyword_sentiment:home' %}"><u>User Keyword Sentiment</u></a>：您可以在我們的網站上可以了解媒體對該關鍵詞的情緒程度。</li>
+                                        <li style="text-align: left;"><a href="{% url 'app_top_rank:home' %}"><u>Top Rank People</u></a>：您可以在我們的網站上了解目前賴清德、侯友宜、柯文哲的人氣聲量大PK</li>
+                                        <li style="text-align: left;"><a href="{% url 'app_sentiment_bert:home' %}"><u>Top Person Yesterday</u></a>：您可以在我們的網站上了解昨日哪個人物被報導最多次?</li>
+                                        <li style="text-align: left;"><a href="{% url 'app_top_person_yesterday:home' %}"><u>Sentiment Analysis</u></a>：BERT模型。</li>
+                                    </ul>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+<style>
+    .stroke {
+        position: relative;
+        color: #fff;
+        font-size: 1.5rem;
+        z-index: 10;
+        /* background: #484e88; */
+        background: radial-gradient(circle, #000000 40%, #0b779e);
+        text-align: center;
+        padding: 30px;
+        letter-spacing: 0px;
+    }
+
+    .stroke:before {
+        position: absolute;
+        z-index: -1;
+        -webkit-text-stroke: 5px #5b947f;
+        content: attr(data-stroke);
+    }
+</style>
+
+</html>
+
+<!-- jQuery js-->
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<!-- chartjs js-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+<!-- Your JavaScript Codes -->
+<script>
+
+</script>

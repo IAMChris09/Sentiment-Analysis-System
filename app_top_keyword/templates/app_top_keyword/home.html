@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>輿情分析平台</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    {% load static %}
+
+    <div class="container">
+        <div class="row">
+
+            <!-- Here insert the navigation bar -->
+            {%include 'navbar.html'%}
+
+            <style>
+                .divs .imgs {
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+
+                .divs .infos {
+                    display: inline-block;
+                    vertical-align: bottom;
+                }
+            </style>
+
+            <div class="col-lg-12">
+
+                <div class="divs" style="text-align: center; line-height: 100px;">
+                    <div class="imgs"><img src="{% static 'app_top_keyword/fire.png' %}" width="50" alt="flower"></div>
+                    <div class="infos">
+                        <h1>各類新聞最熱門的關鍵詞</h1>
+                    </div>
+                </div>
+
+                <h4>熱門度分析:了解個版面關注事物</h4>
+            </div>
+
+            <!-- 新聞類別選單------------------------------->
+            <div class="col-lg-12 mb-2">
+                <div class="card">
+                    <div class="card-header" style="background-color: darkslategray; color: white;">
+                        <h3 class="h6 text-uppercase mb-0">熱門關鍵字瀏覽與繪圖</h3>
+                    </div>
+
+                    <div class="card-body">
+
+                        <!--新聞類別選單 form group-->
+                        <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">新聞類別</label>
+                            <div class="col-md-9">
+                                <select id="cate-selected" name="news_category" class="form-control">
+                                    <!--<option>請選擇</option>-->
+                                    <option>全部</option>
+                                    <option>討論</option>
+                                    <option>轉錄</option>
+                                    <option>新聞</option>
+                                    <option>黑特</option>
+                                    <!-- <option>分享</option> -->
+                                </select>
+                                <small class="form-text text-muted">請選擇新聞類別
+                                </small>
+                            </div>
+                        </div>
+                        <!--form group-->
+
+                        <!--熱門詞多少個?form group-->
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label">多少個熱門詞?</label>
+                            <div class="col-md-9">
+                                <input id="topk-selected" name="topk" value="10"
+                                    class="form-control form-control-success">
+                                <small class="form-text text-muted">內定值為10
+                                </small>
+                            </div>
+                        </div>
+                        <!--form group-->
+
+                        <!--submit按鈕form group-->
+                        <div class="form-group row">
+                            <div class="col-md-9 ml-auto">
+                                <button type="button" id="btn-ok" class="btn btn-primary">查詢</button>
+                            </div>
+                        </div>
+                        <!--form group-->
+
+                    </div>
+                    <!--card body-->
+                </div>
+                <!--column-->
+            </div><!-- 區塊結束 -->
+
+
+            <!-- 繪圖區塊--------------------------------------------------------->
+            <div class="col-lg-6 mb-5">
+                <div class="card">
+                    <div class="card-header" style="background-color: darkslategray; color: white;">
+                        <h3 class="h6 text-uppercase mb-0">熱門關鍵字繪圖</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="mychart"></canvas>
+                    </div>
+                </div>
+            </div><!-- 區塊結束 -->
+
+            <!-- 繪圓餅圖區塊--------------------------------------------------------->
+            <div class="col-lg-6 mb-5">
+                <div class="card">
+                    <div class="card-header" style="background-color: darkslategray; color: white;">
+                        <h3 class="h6 text-uppercase mb-0">熱門關鍵字甜甜圈圖</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="piemychart"></canvas>
+                    </div>
+                </div>
+            </div><!-- 區塊結束 -->
+
+            <!-- 熱門關鍵字區塊----------------------------------------------------->
+            <div class="col-lg-4 mb-5">
+                <div class="card">
+                    <div class="card-header" style="background-color: darkslategray; color: white;">
+                        <h3 class="h6 text-uppercase mb-0">熱門關鍵字</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul id="topkeys"></ul>
+                    </div>
+                </div>
+            </div><!-- 區塊結束 -->
+
+            <!-- draw cloud chart -->
+            <div class="col-lg-8 mb-5">
+                <div class="card">
+                    <div class="card-header" style="background-color: darkslategray; color: white;">
+                        <h3 class="h6 text-uppercase mb-0">熱門關鍵字雲圖</h3>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- <div id="cloud"></div> -->
+                        <!-- "C:\Users\Chris Lin\Downloads\dinosaur.jpg" -->
+                        <!-- <img src="{% static '{{cate-selected}}.png' %}" alt="flower"> -->
+
+                        <!-- <img id="ANSWER" alt="flower">
+                        <img src="{{ANSWER}}" alt="flower"> -->
+
+                        <script>
+                            // let cate = $('#cate-selected').val();
+                            // document.getElementById('imageBox').src = cate + ".png";
+                            // var doucumentOfPng = cate + ".png";
+                            // document.getElementById("event-1").innerHTML = document.getElementById("news_category").value + ".png";
+                            // var doucumentOfPng = document.getElementById("#cate-selected").innerText + ".png";
+                            // document.getElementById("event-1").src = doucumentOfPng;
+
+                            // let myVar = $('#cate-selected').val();
+                            // document.getElementById("tryto").innerHTML = myVar;
+
+                            // var $ANSWER = $('#cate-selected').val();
+                            // document.getElementById("ANSWER").src = $ANSWER + '.png';
+                            // console.log(document.getElementById('ANSWER').src);
+
+                            // var catethatselected = $('#cate-selected').val();
+                            // console.log(catethatselected);
+
+                            // if (catethatselected == "全部") {
+                            //     document.write(" <img src='{% static '全部.png' %}' alt='flower'> ");
+                            // }
+                            // else if (catethatselected == "討論") {
+
+                            // }
+                            // else if (catethatselected == "轉錄") {
+
+                            // }
+                            // else if (catethatselected == "新聞") {
+
+                            // }
+                            // else if (catethatselected == "黑特") {
+
+                            // }
+                            // else if (catethatselected == "分享")
+                        </script>
+
+                        <script>
+                            // $('#cate-selected').on('change', function () {
+                            //     callAjax();
+                            // }); //event function
+
+                            // var catethatselected = $('#cate-selected').val();
+                            // console.log(catethatselected);
+
+                            // if (catethatselected == "全部") {
+                            //     document.write(" <img src='{% static '全部.png' %}' alt='1'> ");
+                            // }
+                            // else if (catethatselected == "討論") {
+                            //     document.write(" <img src='{% static '討論.png' %}' alt='2'> ");
+                            // }
+                            // else if (catethatselected == "轉錄") {
+                            //     document.write(" <img src='{% static '轉錄.png' %}' alt='3'> ");
+                            // }
+                            // else if (catethatselected == "新聞") {
+                            //     document.write(" <img src='{% static '新聞.png' %}' alt='4'> ");
+                            // }
+                            // else if (catethatselected == "黑特") {
+                            //     document.write(" <img src='{% static '黑特.png' %}' alt='5'> ");
+                            // }
+                            // else if (catethatselected == "分享") {
+                            //     document.write(" <img src='{% static '分享.png' %}' alt='6'> ");
+                            // }
+                        </script>
+
+                        <div id="pic"></div>
+                        <!-- <img src="{% static '全部.png' %}" alt="flower"> -->
+                        <!-- <img src="{% static ggg %}.png" alt="flower"> -->
+                        <!-- <img src="" id="event-1" alt="flower"> -->
+                        <!-- <img src="{{ANSWER}}.png" alt="flower"> -->
+
+                        <!-- <script>
+                            
+                        </script> -->
+
+                        <!-- <script>console.log(myVar)</script> -->
+                        <!-- <script>console.log($('#cate-selected').val());</script> -->
+
+                        <!-- <img src="{% static '{{ANSWER}}.png' %}" alt="flower"> -->
+
+                    </div>
+                </div>
+            </div><!-- column -->
+
+        </div> <!-- row結束-->
+    </div> <!-- container結束-->
+
+    <!-- <script>
+        var $ANSWER = $('#cate-selected').val();
+        document.getElementById("ANSWER").src = $ANSWER + '.png';
+        console.log(document.getElementById('ANSWER').src);
+        console.log(ANSWER)
+    </script> -->
+
+</body>
+
+</html>
+
+<!-- chartjs圖js-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+<script src="https://cdn.rawgit.com/jasondavies/d3-cloud/v1.2.1/build/d3.layout.cloud.js"></script>
+
+<!-- 程式碼區 -->
+<script>
+    // Show default top words bar chart when the page is loaded.
+    // Invoke callAjax() after the function is defined, unless callAjax() is defined with "hoisting"
+    callAjax();
+
+    //*新聞類別選單select被選中值有改變時，執行以下事件
+    //$('#cate-selected').on('change', callAjax() );
+    $('#cate-selected').on('change', function () {
+        callAjax();
+    }); //event function
+
+    //**按鈕事件
+    $('#btn-ok').on('click', function () {
+        callAjax();
+    }); //event function
+
+
+    // ** draw chart using Ajax 畫圖
+    // There are two ways to define a function:
+    // one is expression, and the other is definition with "hoisting"
+    // function with hoisting:  function callAjax() {}
+    // normal function expression: let callAjax = function() {}
+
+    // Define callAjax function with hoisting
+    // callAjax()這樣定義可以在被定義前就被使用 跟我們在Java裡面的函數用法一樣!
+
+    //let callAjax = function() {
+    function callAjax() {
+        let cate = $('#cate-selected').val();
+        // console.log(cate);
+
+        let topk = $('#topk-selected').val();
+        // console.log(topk);
+
+        $.ajax({
+            type: "POST",
+
+            //url: "/topword/api_get_cate_topword/",
+            url: "http://127.0.0.1:8000/topword/api_get_cate_topword/",
+            //url: "http://163.18.23.21:8000/topword/api_get_cate_topword/",
+            //url: "api_get_cate_topword/", //Not recommended!
+
+            data: {
+                "news_category": cate,
+                "topk": topk,
+                // "news_category": cate,
+                // "topk": topk,
+                // "ner_value": ner_value,
+            },
+            success: function (received) {
+                //console.log(received);
+                let chart_data = received.chart_data;
+                let wf_pairs = received.wf_pairs;
+                console.log(wf_pairs)
+                showTopKeys(wf_pairs);
+                showChart(chart_data);
+                showpieChart(chart_data);
+                cloudpic(cate);
+
+                console.log(received.data);
+                if (received.data.length == 0) {
+                    $('#cloud').append("<h4>No Data!</h4>");
+                    $('#topkeys').append("<h4>No Data!</h4>");
+                    $('#pic').append("<h4>No Data!</h4>");
+                    return
+                }
+                topWordToDraw = received.data.data_cloud;
+                drawCloud(topWordToDraw, '#cloud');
+
+            } //success function
+        }); //ajax
+    } //callAjax
+
+    function cloudpic(catethatselected) {
+        // console.log(catethatselected);
+        $('#pic').empty();
+        if (catethatselected == "全部") {
+            $('#pic').append(" <img src='{% static 'app_top_keyword/全部.png' %}' alt='1'> ");
+        }
+        else if (catethatselected == "討論") {
+            $('#pic').append(" <img src='{% static 'app_top_keyword/討論.png' %}' alt='2'> ");
+        }
+        else if (catethatselected == "轉錄") {
+            $('#pic').append(" <img src='{% static 'app_top_keyword/轉錄.png' %}' alt='3'> ");
+        }
+        else if (catethatselected == "新聞") {
+            $('#pic').append(" <img src='{% static 'app_top_keyword/新聞.png' %}' alt='4'> ");
+        }
+        else if (catethatselected == "黑特") {
+            $('#pic').append(" <img src='{% static 'app_top_keyword/黑特.png' %}' alt='5'> ");
+        }
+    }
+
+
+    //* 顯示關鍵詞資料函數
+    function showTopKeys(items) {
+        //先清除前一次的資料
+        $('#topkeys').empty();
+
+        //將內容加上li標籤附加起來，顯示在顯示區"topkeys"
+        for (let i = 0; i < items.length; i++) {
+            let item_li = "<li>" + items[i] + "</li>";
+            $('#topkeys').append(item_li);
+        }
+    } //function
+
+    //**繪圖函數showChart()
+    function showChart(chart_data) {
+
+        // 畫圖需要的數據資料
+        let values = chart_data.values;
+        let labels = chart_data.labels;
+        let category = chart_data.category;
+
+        //第1個變數: 餵給chart的資料
+        let data = {
+            labels: labels,
+            datasets: [{
+                label: category,
+                data: values,
+                backgroundColor: randomColors(values.length),
+                borderColor: randomColors(values.length),
+                borderWidth: 1,
+            }],
+        };
+
+        //第2個變數: chart的選項  指定y坐標軸從零開始顯示
+        let options = {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+        };
+
+        //取得在前面html區域欲顯示的圖代號
+        let canvas_mychrat = document.getElementById("mychart");
+
+
+        //**先清除前一個圖 再繪新圖
+        // 可以印出barchart物件是否存在
+        // console.log(window.barchart);
+        //先清除前一個圖 再繪新圖 if 有以下兩種寫法皆可
+        // if (window.barchart)  //若存在則為true
+        // if (typeof (barchart) != "undefined"){
+        if (window.barchart) {
+            barchart.destroy();
+        }
+
+        //**繪圖(產生一個圖物件變數名稱為barchart)
+        // 必須全域變數--注意:前面不要有let, var, const等修飾詞
+        // 理由: 我們要讓它存在於網頁全域變數，
+        // 這樣我們才方便判斷是否有前一次的圖，如果存在有，要刪除之，否則，很多張圖會疊在一起 
+        barchart = new Chart(canvas_mychrat, {
+            type: 'bar',
+            data: data,
+            options: options,
+        });
+
+
+        //** 產生隨機顏色
+        function randomColors(num_colors) {
+            let colors = [];
+
+            for (i = 0; i < num_colors; i++) {
+
+                let r = Math.floor(Math.random() * 255);
+                let g = Math.floor(Math.random() * 255);
+                let b = Math.floor(Math.random() * 255);
+                let rgb = `rgba(${r},${g},${b},0.5)` // (red, green, blue, alfa) alfa透明度
+
+                colors.push(rgb);
+            }
+            return colors;
+        }
+
+
+    } //show chart function
+
+
+    // document就是這個網頁HTML所有的元素
+    // window就是這個網頁的全域變數global variables:有一大堆，我們自己定義的有callAjax, showChart, barchart等
+    // 把document, window印出來看看就能理解它們是甚麼
+    //console.log(document);
+    //console.log(window);
+
+    function showpieChart(chart_data) {
+
+        // 畫圖需要的數據資料
+        let values = chart_data.values;
+        let labels = chart_data.labels;
+        let category = chart_data.category;
+
+        //第1個變數: 餵給chart的資料
+        let data = {
+            labels: labels,
+            datasets: [{
+                label: category,
+                data: values,
+                backgroundColor: randomColors(values.length),
+                borderColor: randomColors(values.length),
+                borderWidth: 1,
+            }],
+        };
+
+        //第2個變數: chart的選項  指定y坐標軸從零開始顯示
+        let options = {
+            scales: {
+                // yAxes: [{
+                //     ticks: {
+                //         beginAtZero: true
+                //     }
+                // }]
+            },
+        };
+
+        //取得在前面html區域欲顯示的圖代號
+        let canvas_mychrat1 = document.getElementById("piemychart");
+
+
+        //**先清除前一個圖 再繪新圖
+        // 可以印出barchart物件是否存在
+        // console.log(window.barchart);
+        //先清除前一個圖 再繪新圖 if 有以下兩種寫法皆可
+        // if (window.barchart)  //若存在則為true
+        // if (typeof (barchart) != "undefined"){
+        if (window.barchart1) {
+            barchart1.destroy();
+        }
+
+        //**繪圖(產生一個圖物件變數名稱為barchart)
+        // 必須全域變數--注意:前面不要有let, var, const等修飾詞
+        // 理由: 我們要讓它存在於網頁全域變數，
+        // 這樣我們才方便判斷是否有前一次的圖，如果存在有，要刪除之，否則，很多張圖會疊在一起 
+        barchart1 = new Chart(canvas_mychrat1, {
+            type: 'doughnut',
+            data: data,
+            options: options,
+        });
+
+
+        //** 產生隨機顏色
+        function randomColors(num_colors) {
+            let colors = [];
+
+            for (i = 0; i < num_colors; i++) {
+
+                let r = Math.floor(Math.random() * 255);
+                let g = Math.floor(Math.random() * 255);
+                let b = Math.floor(Math.random() * 255);
+                let rgb = `rgba(${r},${g},${b},0.5)` // (red, green, blue, alfa) alfa透明度
+
+                colors.push(rgb);
+            }
+            return colors;
+        }
+
+
+    }
+
+    //** cloud chart
+    function drawCloud(topWordToDraw, element_id) {
+        // You should set a proper box size to show cloud chart
+        const width = 400;
+        const height = 400;
+
+        // First define your cloud data, using `text` and `size` properties:
+        // Next you need to use the layout script to calculate the placement, rotation and size of each word:
+        // Constructs a new cloud layout instance.
+        d3.layout.cloud()
+            .size([width, height])
+            .words(topWordToDraw) //data for cloud chart
+            .rotate(function () {
+                //return ~~(Math.random() * 2) * 90; //~~1.5 => 1  (same as Math.floor(1.5))
+                return 0; // don't rotate
+            })
+            .font("Impact")
+            .fontSize(function (d) {
+                return d.size;
+            })
+            .on("end", draw) //call function draw()
+            .start();
+
+        // Finally implement `draw`, which performs the D3 drawing
+        // This function takes the output of 'layout' above and draw the words
+        function draw(words) {
+
+            const fill = d3.scale.category20();
+
+            // append the svg object to the body of the page
+            d3.select(element_id).append("svg") // element_id such as "#cloud"
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + ~~(width / 2) + "," + ~~(height / 2) + ")")
+                .selectAll("text")
+                .data(words)
+                .enter().append("text")
+                .style("font-size", function (d) {
+                    return d.size + "px";
+                })
+                .style("-webkit-touch-callout", "none")
+                .style("-webkit-user-select", "none")
+                .style("-khtml-user-select", "none")
+                .style("-moz-user-select", "none")
+                .style("-ms-user-select", "none")
+                .style("user-select", "none")
+                .style("cursor", "default")
+                .style("font-family", "Impact")
+                .style("fill", function (d, i) {
+                    return fill(i);
+                })
+                .attr("text-anchor", "middle")
+                .attr("transform", function (d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .text(function (d) {
+                    return d.text;
+                });
+        } //draw
+    } //drawCloud()
+
+
+</script>
